@@ -8,18 +8,17 @@ import { Mail, Lock, User, TrendingUp, Check, X } from 'lucide-react';
 import { AuthCard } from '@/components/ui/auth/auth-card';
 import { AuthInput } from '@/components/ui/auth/auth-input';
 import { AuthButton } from '@/components/ui/auth/auth-button';
-import { GoogleButton } from '@/components/ui/auth/social-button';
-import { signUpWithEmail, signInWithGoogle } from '@/lib/firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignUpPage() {
     const router = useRouter();
+    const { signUp } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
 
     // Password strength validation
     const passwordChecks = {
@@ -49,26 +48,12 @@ export default function SignUpPage() {
         setLoading(true);
 
         try {
-            await signUpWithEmail(email, password, name);
+            await signUp(email, password, name);
             router.push('/');
         } catch (err: any) {
             setError(err.message || 'Failed to create account');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleGoogleSignUp = async () => {
-        setError('');
-        setGoogleLoading(true);
-
-        try {
-            await signInWithGoogle();
-            router.push('/');
-        } catch (err: any) {
-            setError(err.message || 'Failed to sign up with Google');
-        } finally {
-            setGoogleLoading(false);
         }
     };
 
@@ -184,12 +169,12 @@ export default function SignUpPage() {
                                         <div
                                             key={i}
                                             className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < passwordStrength
-                                                    ? passwordStrength === 4
-                                                        ? 'bg-emerald-500'
-                                                        : passwordStrength === 3
-                                                            ? 'bg-yellow-500'
-                                                            : 'bg-red-500'
-                                                    : 'bg-zinc-200'
+                                                ? passwordStrength === 4
+                                                    ? 'bg-emerald-500'
+                                                    : passwordStrength === 3
+                                                        ? 'bg-yellow-500'
+                                                        : 'bg-red-500'
+                                                : 'bg-zinc-200'
                                                 }`}
                                         />
                                     ))}
@@ -230,17 +215,6 @@ export default function SignUpPage() {
                         Create Account
                     </AuthButton>
                 </form>
-
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-zinc-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-white text-zinc-500">Or continue with</span>
-                    </div>
-                </div>
-
-                <GoogleButton onClick={handleGoogleSignUp} loading={googleLoading} />
 
                 <p className="mt-6 text-center text-sm text-zinc-600">
                     Already have an account?{' '}

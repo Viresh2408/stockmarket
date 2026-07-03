@@ -8,16 +8,15 @@ import { Mail, Lock, TrendingUp } from 'lucide-react';
 import { AuthCard } from '@/components/ui/auth/auth-card';
 import { AuthInput } from '@/components/ui/auth/auth-input';
 import { AuthButton } from '@/components/ui/auth/auth-button';
-import { GoogleButton } from '@/components/ui/auth/social-button';
-import { signInWithEmail, signInWithGoogle } from '@/lib/firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignInPage() {
     const router = useRouter();
+    const { signIn } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
 
     const handleEmailSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,26 +24,12 @@ export default function SignInPage() {
         setLoading(true);
 
         try {
-            await signInWithEmail(email, password);
+            await signIn(email, password);
             router.push('/');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleGoogleSignIn = async () => {
-        setError('');
-        setGoogleLoading(true);
-
-        try {
-            await signInWithGoogle();
-            router.push('/');
-        } catch (err: any) {
-            setError(err.message || 'Failed to sign in with Google');
-        } finally {
-            setGoogleLoading(false);
         }
     };
 
@@ -151,17 +136,6 @@ export default function SignInPage() {
                         Sign In
                     </AuthButton>
                 </form>
-
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-zinc-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-white text-zinc-500">Or continue with</span>
-                    </div>
-                </div>
-
-                <GoogleButton onClick={handleGoogleSignIn} loading={googleLoading} />
 
                 <p className="mt-6 text-center text-sm text-zinc-600">
                     Don't have an account?{' '}
