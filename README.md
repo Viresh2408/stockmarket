@@ -1,112 +1,42 @@
 # Stock Market Risk & Analytics Dashboard
 
-A data pipeline and Power BI dashboard analyzing 2 years of daily price data across 15 major NSE-listed stocks spanning 7 sectors, focusing on volatility-based risk scoring. Built to practice the full analytics/BI workflow (data pipeline → cleaned dataset → dashboard → DAX-driven insights) end to end.
+> A end-to-end data analytics project — from raw market data to an interactive Power BI dashboard — analyzing **15 major NSE-listed stocks** across **7 sectors** using **2 years of daily OHLCV data**.
 
 ---
 
-## What It Does
+## Live Preview
 
-1. **Extracts:** Pulls historical OHLCV data for 15 major NSE stocks spanning 7 key sectors (IT, Banking, FMCG, Energy, Telecom, Auto, Infrastructure) via the Yahoo Finance API.
-2. **Transforms & Computes:** Calculates daily returns, moving averages (20D/50D SMAs), 20-day annualized rolling volatility, drawdown from peaks, and static Low/Medium/High risk classifications.
-3. **Visualizes:** Imports the clean dataset into a 3-page Power BI report comprising:
-   - **Market Overview:** Core KPIs, trend lines, and price performance vs. moving averages.
-   - **Risk Analysis:** Drawdown trends, a Volatility vs. Return scatter plot, and a detailed risk matrix.
-   - **Sector Comparison:** Cross-sector aggregate performance and risk concentration.
-4. **Analyzes:** Drives deep insights using 13 custom DAX measures for dynamic calculations.
+> Run the Streamlit dashboard locally:
+> ```bash
+> streamlit run app.py
+> ```
 
 ---
 
-## Project Structure
+## Overview
+
+This project implements a complete analytics workflow:
 
 ```
-stockmarket/
-├── scripts/
-│   ├── fetch_data.py           # Pulls raw daily OHLCV data from Yahoo Finance
-│   ├── transform_data.py       # Computes daily returns, SMAs, volatility, drawdown, and risk categories
-│   └── generate_sample_data.py # Synthetic-data fallback for offline testing
-├── data/
-│   └── stock_data_clean.csv    # Cleaned, enriched dataset imported into Power BI
-├── docs/
-│   ├── PIPELINE.md             # Data flow architecture and mathematical transformation logic
-│   ├── DAX_MEASURES.md         # Full formulas for all 13 DAX measures
-│   └── DASHBOARD_GUIDE.md      # Step-by-step layout and build guide for Power BI
-├── dashboard/
-│   ├── generate_charts.py      # Standalone script — exports all 7 charts as PNGs
-│   ├── README.md               # Dashboard overview with embedded chart screenshots
-│   └── screenshots/            # Auto-generated PNG exports of all 7 charts
-└── requirements.txt            # Python dependencies
+Yahoo Finance API  →  Python Pipeline  →  Clean Dataset  →  Power BI Dashboard
+     (raw OHLCV)       (pandas/numpy)     (CSV, 3,120 rows)   (7 Python charts + DAX)
 ```
+
+**15 NSE Stocks covered across 7 sectors:**
+
+| Sector | Stocks |
+|--------|--------|
+| IT | TCS, Infosys, Wipro |
+| Banking | HDFC Bank, ICICI Bank, Kotak Bank |
+| FMCG | HUL, ITC, Nestle |
+| Energy | Reliance, ONGC |
+| Telecom | Bharti Airtel |
+| Auto | Maruti Suzuki, Tata Motors |
+| Infrastructure | Adani Ports |
 
 ---
 
-## Technical Stack
-
-* **Data Source:** Yahoo Finance API (via `yfinance` library)
-* **Pipeline Engine:** Python 3.x, pandas, numpy
-* **Storage:** CSV (flat-file, database-ready schema)
-* **Analytics & BI:** Power BI Desktop, DAX (Data Analysis Expressions)
-
----
-
-## How to Setup & Run
-
-### 1. Set Up Python Environment
-Create a virtual environment and install the required dependencies:
-```bash
-# Create virtual environment
-python -m venv .venv
-
-# Activate virtual environment (Windows)
-.venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Run the Data Pipeline
-
-To fetch real historical price data from Yahoo Finance:
-```bash
-python scripts/fetch_data.py
-```
-*Note: This script will download 2 years + 75 days of daily prices to establish a rolling SMA/volatility warm-up window.*
-
-Alternatively, if you are offline or want to run a quick test with synthetic data:
-```bash
-python scripts/generate_sample_data.py
-```
-
-### 3. Transform and Enrich the Dataset
-Run the transformation pipeline to calculate the risk metrics and clean the dataset:
-```bash
-python scripts/transform_data.py
-```
-This output is saved to `data/stock_data_clean.csv`, ready for visualization.
-
-### 4. Build the Power BI Dashboard
-Open **Power BI Desktop** and follow the step-by-step assembly instructions in [DASHBOARD_GUIDE.md](docs/DASHBOARD_GUIDE.md) to build the visual reports and integrate the DAX measures detailed in [DAX_MEASURES.md](docs/DAX_MEASURES.md).
-
-### 5. Export Charts as Images
-To generate all 7 dashboard charts as PNG files (no Power BI required):
-```bash
-python dashboard/generate_charts.py
-```
-Charts are saved to `dashboard/screenshots/`.
-
----
-
-## Key Metrics Computed
-
-* **Daily Returns ($R_t$):** Standard daily percentage price changes.
-* **Simple Moving Averages (20D/50D SMAs):** Trend indicator tracking short and medium term price momentum.
-* **Rolling Annualized Volatility (20-day):** Annualized standard deviation of daily returns, representing the stock's primary risk score.
-* **Drawdown from Peak:** Percentage loss from the highest peak price reached by the stock during the period.
-* **Risk Category (Low/Medium/High):** Volatility tercile classification dividing the 15 stocks into three risk groups of 5 stocks each.
-* **Sharpe Ratio (Approximate):** Measures risk-adjusted excess returns assuming a 6% Indian market risk-free rate ($R_f$).
-
----
-
-## Dashboard Screenshots
+## Dashboard — 7 Charts
 
 ### Chart 1 — KPI Summary Cards
 ![KPI Summary Cards](dashboard/screenshots/chart1_kpi_cards.png)
@@ -118,7 +48,7 @@ Charts are saved to `dashboard/screenshots/`.
 ![Volatility Bar Chart](dashboard/screenshots/chart3_volatility_bar.png)
 
 ### Chart 4 — Risk Category Distribution
-![Risk Category Donut](dashboard/screenshots/chart4_risk_donut.png)
+![Risk Donut](dashboard/screenshots/chart4_risk_donut.png)
 
 ### Chart 5 — Risk vs Return Bubble Chart
 ![Risk Return Scatter](dashboard/screenshots/chart5_risk_return_scatter.png)
@@ -126,5 +56,132 @@ Charts are saved to `dashboard/screenshots/`.
 ### Chart 6 — Sector Average Daily Return
 ![Sector Avg Return](dashboard/screenshots/chart6_sector_avg_return.png)
 
-### Chart 7 — Sector x Risk Category Matrix
+### Chart 7 — Sector × Risk Category Matrix
 ![Sector Risk Matrix](dashboard/screenshots/chart7_sector_risk_matrix.png)
+
+---
+
+## Key Metrics Computed
+
+| Metric | Description |
+|--------|-------------|
+| **Daily Return** $R_t$ | `(Close_t - Close_{t-1}) / Close_{t-1}` |
+| **SMA-20 / SMA-50** | 20-day and 50-day simple moving averages of Close |
+| **Rolling Volatility** $\sigma$ | 20-day rolling std of $R_t$, annualized × √252 |
+| **Drawdown** | `(Close - Rolling Peak) / Rolling Peak` |
+| **Risk Category** | Tercile split by mean volatility → Low / Medium / High |
+
+---
+
+## Tech Stack
+
+| Layer | Tools |
+|-------|-------|
+| Data Source | Yahoo Finance API (`yfinance`) |
+| Pipeline | Python 3.x · `pandas` · `numpy` |
+| Visualization | `matplotlib` · Power BI Desktop · DAX |
+| Web App | `streamlit` |
+| Storage | CSV (flat-file, database-ready schema) |
+
+---
+
+## Project Structure
+
+```
+stockmarket/
+├── app.py                          # Streamlit web dashboard
+├── requirements.txt                # Python dependencies
+│
+├── scripts/
+│   ├── fetch_data.py               # Pulls 2yr+ OHLCV data from Yahoo Finance
+│   ├── transform_data.py           # Computes all metrics and risk classifications
+│   ├── generate_sample_data.py     # Synthetic data fallback for offline testing
+│   └── powerbi_python_visuals/     # Power BI Python visual scripts (Charts 1–3)
+│
+├── data/
+│   └── stock_data_clean.csv        # Final enriched dataset (16 columns, 3,120 rows)
+│
+├── docs/
+│   ├── PIPELINE.md                 # Data flow + mathematical transformation logic
+│   ├── DAX_MEASURES.md             # All 13 custom DAX measure formulas
+│   └── DASHBOARD_GUIDE.md          # Step-by-step Power BI build guide
+│
+└── dashboard/
+    ├── generate_charts.py          # Exports all 7 charts as PNGs (no Power BI needed)
+    ├── dark_theme.json             # Power BI dark theme file
+    ├── README.md                   # Dashboard visual showcase
+    └── screenshots/                # Chart PNGs referenced in this README
+```
+
+---
+
+## Quick Start
+
+### 1. Clone & set up environment
+```bash
+git clone https://github.com/Viresh2408/stockmarket.git
+cd stockmarket
+
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS/Linux
+
+pip install -r requirements.txt
+```
+
+### 2. Fetch data
+```bash
+# Live data from Yahoo Finance (requires internet)
+python scripts/fetch_data.py
+
+# OR — offline synthetic data for quick testing
+python scripts/generate_sample_data.py
+```
+
+### 3. Run the pipeline
+```bash
+python scripts/transform_data.py
+# Output: data/stock_data_clean.csv
+```
+
+### 4. View charts in the browser
+```bash
+streamlit run app.py
+# Opens at http://localhost:8501
+```
+
+### 5. Build the Power BI Dashboard
+Open **Power BI Desktop** → import `data/stock_data_clean.csv` → follow the step-by-step guide in [`docs/DASHBOARD_GUIDE.md`](docs/DASHBOARD_GUIDE.md).  
+Use the Python visual scripts in `scripts/powerbi_python_visuals/` to embed charts directly inside Power BI.
+
+---
+
+## Dataset Schema
+
+`data/stock_data_clean.csv` — 16 columns:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `Date` | Date | Trading session date (YYYY-MM-DD) |
+| `Ticker` | Text | NSE symbol (e.g. `TCS.NS`) |
+| `Company` | Text | Full company name |
+| `Sector` | Text | Sector classification (7 sectors) |
+| `Open / High / Low / Close` | Decimal | OHLCV session prices |
+| `Volume` | Integer | Shares traded |
+| `Daily_Return` | Decimal | % price change from previous close |
+| `SMA_20` | Decimal | 20-day simple moving average |
+| `SMA_50` | Decimal | 50-day simple moving average |
+| `Rolling_Volatility` | Decimal | 20-day annualized volatility |
+| `Drawdown` | Decimal | % decline from rolling peak |
+| `Risk_Category` | Text | `Low` / `Medium` / `High` |
+
+---
+
+## Documentation
+
+| File | Contents |
+|------|----------|
+| [`docs/PIPELINE.md`](docs/PIPELINE.md) | Mathematical formulas, data flow, transformation logic |
+| [`docs/DAX_MEASURES.md`](docs/DAX_MEASURES.md) | All 13 DAX measures used in Power BI |
+| [`docs/DASHBOARD_GUIDE.md`](docs/DASHBOARD_GUIDE.md) | Step-by-step Power BI report build guide |
+| [`dashboard/README.md`](dashboard/README.md) | Dashboard page-by-page visual showcase |
